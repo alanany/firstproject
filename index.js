@@ -1,44 +1,48 @@
-
-/*
-mongodb+srv://admin:123@cluster0.amfamoy.mongodb.net/?appName=Cluster0
-*/
 const express = require("express");
 const app = express();
 const port = 3000;
-const logger = require("./logger");
+const connectMango = require("./middilewares/mongo_connect.js");
+const courserouters = require("./routes/courses_routes.js");
+const userRouters = require("./routes/users_routes.js");
+const cors = require('cors');
+const path = require('path');
+// Enable CORS
+app.use(cors());
+// Middleware
+app.use(express.json());
 
-
-app.use(logger);
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
-app.use(express.json(),);
-
-app.get("/hello", (req, res) => {
-  res.render("number.ejs", { name: "al anany abo yasein " });
-});
-
-app.get("/greet", (req, res) => {
-  const numbers = [];
-  for (let i = 0; i <= 5; i++) {
-    numbers.push(i);
+// Connect DB then start server
+(async () => {
+  try {
+    await connectMango();
+    app.listen(port, () => {
+      console.log(`Server is running at http://localhost:${port}`);
+    });
+  } catch (err) {
+    console.error("Startup aborted due DB connection failure:", err);
+    process.exit(1);
   }
-  res.send(numbers);
+})();
+// Serve static files from the "uploads" directory
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')  ));
+// Routes
+app.use("/api/cources", courserouters);
+app.use('/api/users', userRouters); 
+// 404 Handler
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: false,
+    message: "Route not found",
+    path: req.originalUrl
+   
+  });
 });
-// path parameter in req 
-app.get("/getSum/:num1/:num2", (req, res) => {
-  let num1 = req.params.num1;
-  let num2 = req.params.num2;
-  res.send(`numbers ${num1} x ${num2} = ${num1* num2}`)
-});
-/// body paramter 
-app.get("/data1", (req, res) => {
-let name = req.query.name;
-let age = req.query.age;
-
-  res.json({
-    name: `Hello ${name}`,
-     age: `Hello ${age}`
-  })
-
+// Error Handler
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  res.status(err.status || 500).json({
+    status: err.status || 500,
+    statusCode  : err.statusCode || "INTERNAL_SERVER_ERROR",
+    message: err.message || 'Internal Server Error'
+  });
 });
