@@ -16,7 +16,7 @@ app.use(express.json());
   try {
     await connectMango();
     app.listen(port, () => {
-      console.log(`Server is running at http://localhost:${port}`);
+      console.log(`Server is running at https://node-js-first-project-iqkb.onrender.com`);
     });
   } catch (err) {
     console.error("Startup aborted due DB connection failure:", err);
