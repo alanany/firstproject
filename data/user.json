@@ -1,0 +1,20 @@
+{
+    "id": "user_001",
+    "name": "ali",
+    "username": "ali",
+    "email": "ali@example.com",
+    "passwordHash": "<hashed_password_placeholder>",
+    "roles": ["user"],
+    "isActive": true,
+    "createdAt": "2025-11-10T00:00:00Z",
+    "profile": {
+        "firstName": "Ali",
+        "lastName": "",
+        "bio": "",
+        "avatarUrl": null
+    },
+    "settings": {
+        "language": "en",
+        "timezone": "UTC"
+    }
+}
